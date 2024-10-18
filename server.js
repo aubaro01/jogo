@@ -14,7 +14,7 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html')); // Serve index.html
 });
 
-// Serve arquivos estáticos
+// Serve arquivos estáticos (como style.css e script.js)
 app.use(express.static(__dirname)); // Serve todos os arquivos na raiz
 
 io.on('connection', (socket) => {
