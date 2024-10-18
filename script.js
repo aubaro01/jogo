@@ -10,7 +10,6 @@ let currentQuestionIndex = 0;
 let score = 0;
 let timer;
 
-
 // Perguntas combinadas (mesmas do seu código original)
 const questions = [
     {
@@ -19,85 +18,88 @@ const questions = [
         correct: "Moisés"
     },
     {
-        question: "Quem enfrentou o gigante Golias?",
-        options: ["Davi", "Sansão", "Gideão"],
-        correct: "Davi"
-    },
-    {
-        question: "Quantos dias Noé e sua família ficaram na arca durante o dilúvio?",
-        options: ["40 dias", "150 dias", "100 dias"],
-        correct: "150 dias"
-    },
-    {
-        question: "Qual mar foi dividido para que os israelitas escapassem dos egípcios?",
-        options: ["Mar Vermelho", "Mar Mediterrâneo", "Rio Jordão"],
-        correct: "Mar Vermelho"
-    },
-    {
-        question: "Quem foi o primeiro rei de Israel?",
-        options: ["Saul", "Davi", "Salomão"],
-        correct: "Saul"
-    },
-    {
-        question: "Quantas pragas houve no Egito?",
-        options: ["10", "7", "12"],
-        correct: "10"
-    },
-    {
-        question: "Quem foi chamado de amigo de Deus?",
-        options: ["Abraão", "Moisés", "Noé"],
-        correct: "Abraão"
-    },
-    {
-        question: "Qual o nome da mãe de Jesus?",
-        options: ["Maria", "Sara", "Madalena"],
-        correct: "Maria"
-    },
-    {
-        question: "Quem escreveu os Salmos?",
-        options: ["Davi", "Salomão", "Elias"],
-        correct: "Davi"
-    },
-    {
-        question: "Quantos livros há no Novo Testamento?",
-        options: ["27", "39", "66"],
-        correct: "27"
-    },
-    {
-        question: "Quem traiu Jesus?",
-        options: ["Judas", "Pedro", "João"],
-        correct: "Judas"
-    },
-    {
-        question: "Qual é o primeiro livro da Bíblia?",
-        options: ["Gênesis", "Êxodo", "Levítico"],
-        correct: "Gênesis"
-    },
-    {
-        question: "Qual o nome do apóstolo que duvidou da ressurreição de Jesus?",
-        options: ["Tomé", "André", "Mateus"],
-        correct: "Tomé"
-    },
-    {
-        question: "Qual o nome do profeta que foi engolido por um grande peixe?",
-        options: ["Jonas", "Elias", "Miquéias"],
-        correct: "Jonas"
-    },
-    {
-        question: "Qual foi o último livro da Bíblia?",
-        options: ["Apocalipse", "Judas", "Tiago"],
-        correct: "Apocalipse"
-    },
-    {
-        question: "Quantos apóstolos Jesus teve?",
-        options: ["12", "10", "14"],
-        correct: "12"
-    },
-    ];
+    question: "Quem enfrentou o gigante Golias?",
+    options: ["Davi", "Sansão", "Gideão"],
+    correct: "Davi"
+},
+{
+    question: "Quantos dias Noé e sua família ficaram na arca durante o dilúvio?",
+    options: ["40 dias", "150 dias", "100 dias"],
+    correct: "150 dias"
+},
+{
+    question: "Qual mar foi dividido para que os israelitas escapassem dos egípcios?",
+    options: ["Mar Vermelho", "Mar Mediterrâneo", "Rio Jordão"],
+    correct: "Mar Vermelho"
+},
+{
+    question: "Quem foi o primeiro rei de Israel?",
+    options: ["Saul", "Davi", "Salomão"],
+    correct: "Saul"
+},
+{
+    question: "Quantas pragas houve no Egito?",
+    options: ["10", "7", "12"],
+    correct: "10"
+},
+{
+    question: "Quem foi chamado de amigo de Deus?",
+    options: ["Abraão", "Moisés", "Noé"],
+    correct: "Abraão"
+},
+{
+    question: "Qual o nome da mãe de Jesus?",
+    options: ["Maria", "Sara", "Madalena"],
+    correct: "Maria"
+},
+{
+    question: "Quem escreveu os Salmos?",
+    options: ["Davi", "Salomão", "Elias"],
+    correct: "Davi"
+},
+{
+    question: "Quantos livros há no Novo Testamento?",
+    options: ["27", "39", "66"],
+    correct: "27"
+},
+{
+    question: "Quem traiu Jesus?",
+    options: ["Judas", "Pedro", "João"],
+    correct: "Judas"
+},
+{
+    question: "Qual é o primeiro livro da Bíblia?",
+    options: ["Gênesis", "Êxodo", "Levítico"],
+    correct: "Gênesis"
+},
+{
+    question: "Qual o nome do apóstolo que duvidou da ressurreição de Jesus?",
+    options: ["Tomé", "André", "Mateus"],
+    correct: "Tomé"
+},
+{
+    question: "Qual o nome do profeta que foi engolido por um grande peixe?",
+    options: ["Jonas", "Elias", "Miquéias"],
+    correct: "Jonas"
+},
+{
+    question: "Qual foi o último livro da Bíblia?",
+    options: ["Apocalipse", "Judas", "Tiago"],
+    correct: "Apocalipse"
+},
+{
+    question: "Quantos apóstolos Jesus teve?",
+    options: ["12", "10", "14"],
+    correct: "12"
+},
+];
+
+const characters = [
+    // ... (mesmo código dos personagens)
+];
     
-    const characters = [
-        // ... (mesmo código dos personagens)
-    ];
+];
+
 // Função para gerar um código de sala único
 function generateRoomCode() {
     return Math.random().toString(36).substring(2, 8).toUpperCase(); // Gera um código de sala aleatório
@@ -116,7 +118,7 @@ function createRoom() {
 // Função para entrar em sala
 function joinRoom() {
     const inputRoomCode = document.getElementById('room-input').value;
-    socket.emit('joinRoom', inputRoomCode); // Solicita ao servidor para entrar na sala
+    socket.emit('joinRoom', { roomCode: inputRoomCode, playerName, avatar }); // Envia o nome e avatar ao servidor
 }
 
 // Escuta a confirmação de criação de sala do servidor
@@ -159,6 +161,7 @@ function startGame() {
         document.getElementById('start-buttons').style.display = 'block'; // Exibe botões para o criador da sala
     }
 }
+
 // Exibe a lista de jogadores
 function displayPlayerList() {
     const playerList = document.getElementById('player-list');
@@ -169,15 +172,6 @@ function displayPlayerList() {
         playerDiv.innerHTML = `<img src="${player.avatar}" alt="${player.name}" style="width: 40px; height: 40px; border-radius: 50%; margin-right: 10px;">${player.name}`;
         playerList.appendChild(playerDiv);
     });
-}
-
-// Iniciar modo de perguntas
-function startQuestionMode() {
-    socket.emit('startQuiz', roomCode); // Envia o evento para iniciar o quiz
-    document.getElementById('waiting-room').style.display = 'none';
-    document.getElementById('quiz').style.display = 'block';
-    document.getElementById('total-questions').textContent = questions.length; // Define o total de perguntas
-    startQuiz();
 }
 
 // Função para iniciar o quiz
