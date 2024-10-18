@@ -1,38 +1,33 @@
 const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
+const path = require('path'); // Importando o módulo path
+
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
 
-io.on('connection', socket => {
+const PORT = process.env.PORT || 3000; // Usar a porta fornecida pelo Render
+
+// Serve o arquivo index.html na rota raiz
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html')); // Serve index.html
+});
+
+// Serve arquivos estáticos
+app.use(express.static(__dirname)); // Serve todos os arquivos na raiz
+
+io.on('connection', (socket) => {
     console.log('Novo jogador conectado:', socket.id);
 
-    socket.on('createRoom', roomCode => {
-        socket.join(roomCode);
-        console.log('Sala criada:', roomCode);
-        socket.emit('roomCreated', roomCode); // Confirmação de criação de sala
-    });
-
-    socket.on('joinRoom', roomCode => {
-        const room = io.sockets.adapter.rooms[roomCode];
-        if (room) {
-            socket.join(roomCode);
-            io.to(roomCode).emit('playerJoined', { playerId: socket.id });
-        } else {
-            socket.emit('errorMessage', 'Sala não encontrada');
-        }
-    });
-
-    socket.on('playerMove', (roomCode, moveData) => {
-        socket.to(roomCode).emit('updateGame', moveData);
-    });
+    // Eventos e lógica do jogo...
 
     socket.on('disconnect', () => {
         console.log('Jogador desconectado:', socket.id);
     });
 });
 
-server.listen(3000, () => {
-    console.log('Servidor rodando na porta 3000');
+server.listen(PORT, () => {
+    console.log(`Servidor rodando na porta ${PORT}`);
 });
+
