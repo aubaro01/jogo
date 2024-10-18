@@ -9,11 +9,9 @@ const io = socketIo(server);
 const PORT = process.env.PORT || 3000;
 
 // Middleware para servir arquivos estáticos
-app.use(express.static('public')); // Supondo que seus arquivos HTML, CSS, JS estão em uma pasta chamada 'public'
-
 // Rota para a página principal
 app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/public/index.html'); // Certifique-se de que o caminho para seu arquivo HTML está correto
+    res.sendFile(__dirname  + 'index.html'); // Certifique-se de que o caminho para seu arquivo HTML está correto
 });
 
 // Escutar conexões de socket.io
