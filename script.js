@@ -23,21 +23,19 @@ function generateRoomCode() {
 
 // Função para criar sala
 function createRoom() {
-    roomCode = generateRoomCode(); // Gere um código de sala único
-    console.log("Tentando criar sala com código:", roomCode);
-    socket.emit('createRoom', roomCode); // Envia a solicitação para o servidor criar a sala
+    roomCode = generateRoomCode();
+    console.log("Criando sala com código:", roomCode);
+    socket.emit('createRoom', roomCode);
 }
 
-// Função para entrar em sala
 function joinRoom() {
-    const inputRoomCode = document.getElementById('room-input').value.trim(); // Remove espaços em branco
+    const inputRoomCode = document.getElementById('room-input').value.trim();
     console.log("Tentando entrar na sala:", inputRoomCode);
-    
     if (!inputRoomCode) {
         alert("Por favor, insira um código de sala válido.");
-        return; // Previne o envio se o campo estiver vazio
+        return;
     }
-    socket.emit('joinRoom', inputRoomCode); // Solicita ao servidor para entrar na sala
+    socket.emit('joinRoom', inputRoomCode);
 }
 
 // Escuta a confirmação de criação de sala do servidor
