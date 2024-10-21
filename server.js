@@ -1,5 +1,3 @@
-// server.js
-
 const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
@@ -9,8 +7,13 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
 
-// Servir arquivos estáticos da pasta 'public'
-app.use(express.static(path.join(__dirname, 'public')));
+// Servir arquivos estáticos do diretório atual onde está o server.js
+app.use(express.static(__dirname));
+
+// Rota para servir o index.html quando a raiz for acessada
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
 
 const roomScores = {}; // Objeto para armazenar as pontuações de cada sala
 
@@ -28,7 +31,7 @@ io.on('connection', (socket) => {
     // Evento para entrar em uma sala existente
     socket.on('joinRoom', (roomCode) => {
         const room = io.sockets.adapter.rooms.get(roomCode);
-        if (room && room.size > 0) { // Se a sala existir e tiver jogadores
+        if (room) {
             socket.join(roomCode);
             console.log(`Jogador ${socket.id} entrou na sala ${roomCode}`);
             io.to(roomCode).emit('playerJoined', { playerId: socket.id });
@@ -64,6 +67,3 @@ function generateRoomCode() {
 server.listen(3000, () => {
     console.log('Servidor rodando na porta 3000');
 });
-
-
-
