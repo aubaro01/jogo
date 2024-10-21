@@ -1,4 +1,4 @@
-// Conectando ao servidor WebSocket
+/// Conectando ao servidor WebSocket
 const socket = io('https://biblical-game-server.onrender.com'); // Substitua com sua URL do Render
 
 let playerName;
@@ -10,12 +10,95 @@ let currentQuestionIndex = 0;
 let score = 0;
 let timer;
 
-// Perguntas combinadas
-const questions = [
-    // (as perguntas vão aqui)
-        
-];
 
+// Perguntas combinadas (mesmas do seu código original)
+const questions = [
+    {
+        question: "Quem liderou os israelitas para fora do Egito?",
+        options: ["Moisés", "Abraão", "Davi"],
+        correct: "Moisés"
+    },
+    {
+        question: "Quem enfrentou o gigante Golias?",
+        options: ["Davi", "Sansão", "Gideão"],
+        correct: "Davi"
+    },
+    {
+        question: "Quantos dias Noé e sua família ficaram na arca durante o dilúvio?",
+        options: ["40 dias", "150 dias", "100 dias"],
+        correct: "150 dias"
+    },
+    {
+        question: "Qual mar foi dividido para que os israelitas escapassem dos egípcios?",
+        options: ["Mar Vermelho", "Mar Mediterrâneo", "Rio Jordão"],
+        correct: "Mar Vermelho"
+    },
+    {
+        question: "Quem foi o primeiro rei de Israel?",
+        options: ["Saul", "Davi", "Salomão"],
+        correct: "Saul"
+    },
+    {
+        question: "Quantas pragas houve no Egito?",
+        options: ["10", "7", "12"],
+        correct: "10"
+    },
+    {
+        question: "Quem foi chamado de amigo de Deus?",
+        options: ["Abraão", "Moisés", "Noé"],
+        correct: "Abraão"
+    },
+    {
+        question: "Qual o nome da mãe de Jesus?",
+        options: ["Maria", "Sara", "Madalena"],
+        correct: "Maria"
+    },
+    {
+        question: "Quem escreveu os Salmos?",
+        options: ["Davi", "Salomão", "Elias"],
+        correct: "Davi"
+    },
+    {
+        question: "Quantos livros há no Novo Testamento?",
+        options: ["27", "39", "66"],
+        correct: "27"
+    },
+    {
+        question: "Quem traiu Jesus?",
+        options: ["Judas", "Pedro", "João"],
+        correct: "Judas"
+    },
+    {
+        question: "Qual é o primeiro livro da Bíblia?",
+        options: ["Gênesis", "Êxodo", "Levítico"],
+        correct: "Gênesis"
+    },
+    {
+        question: "Qual o nome do apóstolo que duvidou da ressurreição de Jesus?",
+        options: ["Tomé", "André", "Mateus"],
+        correct: "Tomé"
+    },
+    {
+        question: "Qual o nome do profeta que foi engolido por um grande peixe?",
+        options: ["Jonas", "Elias", "Miquéias"],
+        correct: "Jonas"
+    },
+    {
+        question: "Qual foi o último livro da Bíblia?",
+        options: ["Apocalipse", "Judas", "Tiago"],
+        correct: "Apocalipse"
+    },
+    {
+        question: "Quantos apóstolos Jesus teve?",
+        options: ["12", "10", "14"],
+        correct: "12"
+    },
+    ];
+    
+    const characters = [
+        // ... (mesmo código dos personagens)
+    ];
+    
 // Função para gerar um código de sala único
 function generateRoomCode() {
     return Math.random().toString(36).substring(2, 8).toUpperCase(); // Gera um código de sala aleatório
@@ -23,19 +106,18 @@ function generateRoomCode() {
 
 // Função para criar sala
 function createRoom() {
-    roomCode = generateRoomCode();
-    console.log("Criando sala com código:", roomCode);
-    socket.emit('createRoom', roomCode);
+    roomCode = generateRoomCode(); // Gere um código de sala único
+    socket.emit('createRoom', roomCode); // Envia a solicitação para o servidor criar a sala
+    console.log("Sala criada com código:", roomCode);
+    document.getElementById('code-display').textContent = roomCode; // Exibe o código na página
+    document.getElementById('room-code').style.display = 'block'; // Mostra o código da sala
+    document.getElementById('game-setup').style.display = 'block'; // Mostra a tela de configuração do jogo
 }
 
+// Função para entrar em sala
 function joinRoom() {
-    const inputRoomCode = document.getElementById('room-input').value.trim();
-    console.log("Tentando entrar na sala:", inputRoomCode);
-    if (!inputRoomCode) {
-        alert("Por favor, insira um código de sala válido.");
-        return;
-    }
-    socket.emit('joinRoom', inputRoomCode);
+    const inputRoomCode = document.getElementById('room-input').value;
+    socket.emit('joinRoom', inputRoomCode); // Solicita ao servidor para entrar na sala
 }
 
 // Escuta a confirmação de criação de sala do servidor
@@ -49,7 +131,6 @@ socket.on('roomCreated', (createdRoomCode) => {
 
 // Quando o jogador entra na sala com sucesso
 socket.on('playerJoined', (playerData) => {
-    console.log('Jogador entrou na sala:', playerData);
     players[playerData.playerId] = { name: playerData.playerName, avatar: playerData.avatar };
     displayPlayerList(); // Atualiza a lista de jogadores na interface
 });
@@ -79,7 +160,6 @@ function startGame() {
         document.getElementById('start-buttons').style.display = 'block'; // Exibe botões para o criador da sala
     }
 }
-
 // Exibe a lista de jogadores
 function displayPlayerList() {
     const playerList = document.getElementById('player-list');
@@ -182,13 +262,24 @@ function nextQuestion() {
     }
 }
 
-// Finaliza o jogo
+// Receber e exibir a tabela de classificação
+socket.on('updateLeaderboard', (leaderboard) => {
+    const leaderboardElement = document.getElementById('score-board');
+    leaderboardElement.innerHTML = '<h2>Tabela de Classificação</h2>';
+    leaderboard.forEach((player, index) => {
+        leaderboardElement.innerHTML += `<p>${index + 1}. ${players[player.playerId].name}: ${player.score} pontos</p>`;
+    });
+});
+
+// Enviar pontuações para o servidor quando o jogo termina
 function endGame() {
     document.getElementById('quiz').style.display = 'none';
     document.getElementById('final-result').style.display = 'block';
     document.getElementById('final-score').textContent = `Seu resultado: ${score} de ${questions.length}`;
     document.getElementById('final-avatar').src = avatar; // Exibe o avatar final
-    document.getElementById('score-board').textContent = `Jogadores: ${Object.keys(players).map(id => `${players[id].name}: ${score}`).join(', ')}`;
+
+    // Enviar a pontuação para o servidor
+    socket.emit('endGame', { roomCode, playerId, score });
 }
 
 // Reinicia o jogo
@@ -219,10 +310,4 @@ socket.on('updateGame', (data) => {
 socket.on('playerJoined', (playerData) => {
     players[playerData.playerId] = { name: playerData.playerName, avatar: playerData.avatar };
     displayPlayerList(); // Atualiza a lista de jogadores na interface
-});
-
-// Ouvintes de eventos no carregamento da página
-document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('create-room-button').onclick = createRoom;
-    document.getElementById('join-room-button').onclick = joinRoom;
 });
